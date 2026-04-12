@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@media print {
+  body {
+    background-color: white !important;
+  }
+  nav, .hide-on-print {
+    display: none !important;
+  }
+  .print-full-width {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-column: span 12 !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .prose {
+    max-width: 100% !important;
+  }
+}
