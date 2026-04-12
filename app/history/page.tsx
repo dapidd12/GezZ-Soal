@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { Clock, Trash2, Search, Eye, X, Download, Printer, Copy, CheckCircle2, Loader2, EyeOff } from 'lucide-react';
 import Markdown from 'react-markdown';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function HistoryPage() {
   const [mounted, setMounted] = useState(false);
@@ -106,13 +107,15 @@ export default function HistoryPage() {
         </div>
         
         {history.length > 0 && (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={clearHistory}
             className="inline-flex items-center px-4 py-2 border border-red-200 shadow-sm text-sm font-bold rounded-xl text-red-600 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Hapus Semua
-          </button>
+          </motion.button>
         )}
       </div>
 
@@ -141,40 +144,45 @@ export default function HistoryPage() {
               </div>
             ) : (
               <ul className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
-                {filteredHistory.map((item) => (
-                  <li 
-                    key={item.id}
-                    onClick={() => setSelectedItem(item)}
-                    className={`p-5 hover:bg-slate-50 cursor-pointer transition-colors ${selectedItem?.id === item.id ? 'bg-indigo-50/50 border-l-4 border-indigo-500' : 'border-l-4 border-transparent'}`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-indigo-600 truncate">
-                          {item.subject} - {item.level}
-                        </p>
-                        <p className="text-base text-slate-900 truncate font-semibold mt-1">
-                          {item.topic}
-                        </p>
-                        <div className="flex items-center mt-3 text-xs text-slate-500 space-x-2">
-                          <span className="bg-white border border-slate-200 px-2 py-1 rounded-md shadow-sm font-semibold">
-                            {item.count} Soal {item.type === 'multiple_choice' ? 'PG' : item.type === 'essay' ? 'Essay' : 'Hybrid'}
-                          </span>
-                          <span>•</span>
-                          <span className="font-medium">{formatDate(item.date)}</span>
+                <AnimatePresence>
+                  {filteredHistory.map((item) => (
+                    <motion.li 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      key={item.id}
+                      onClick={() => setSelectedItem(item)}
+                      className={`p-5 hover:bg-slate-50 cursor-pointer transition-colors ${selectedItem?.id === item.id ? 'bg-indigo-50/50 border-l-4 border-indigo-500' : 'border-l-4 border-transparent'}`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-indigo-600 truncate">
+                            {item.subject} - {item.level}
+                          </p>
+                          <p className="text-base text-slate-900 truncate font-semibold mt-1">
+                            {item.topic}
+                          </p>
+                          <div className="flex items-center mt-3 text-xs text-slate-500 space-x-2">
+                            <span className="bg-white border border-slate-200 px-2 py-1 rounded-md shadow-sm font-semibold">
+                              {item.count} Soal {item.type === 'multiple_choice' ? 'PG' : item.type === 'essay' ? 'Essay' : 'Hybrid'}
+                            </span>
+                            <span>•</span>
+                            <span className="font-medium">{formatDate(item.date)}</span>
+                          </div>
+                        </div>
+                        <div className="ml-4 flex-shrink-0 flex space-x-2">
+                          <button
+                            onClick={(e) => handleDelete(item.id, e)}
+                            className="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition-colors"
+                            title="Hapus"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </div>
                       </div>
-                      <div className="ml-4 flex-shrink-0 flex space-x-2">
-                        <button
-                          onClick={(e) => handleDelete(item.id, e)}
-                          className="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition-colors"
-                          title="Hapus"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))}
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
               </ul>
             )}
           </div>
@@ -209,7 +217,7 @@ export default function HistoryPage() {
                   }`}
                 >
                   {includeAnswers ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                  {includeAnswers ? 'Kunci Jawaban: Tampil' : 'Kunci Jawaban: Sembunyi'}
+                  {includeAnswers ? 'Tampilkan Jawaban' : 'Sembunyikan Jawaban'}
                 </button>
 
                 <div className="flex gap-2">
@@ -227,7 +235,7 @@ export default function HistoryPage() {
                     title="Download TXT"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    TXT
+                    Simpan TXT
                   </button>
                   <button
                     onClick={handlePrintPdf}
@@ -235,45 +243,67 @@ export default function HistoryPage() {
                     title="Print / Save PDF"
                   >
                     <Printer className="w-4 h-4 mr-2" />
-                    PDF / Print
+                    Cetak / PDF
                   </button>
                 </div>
               </div>
 
               <div className="flex-1 overflow-auto p-6 lg:p-8 bg-white">
-                {typeof selectedItem.content === 'string' ? (
-                  <div className="prose prose-slate max-w-none prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-p:text-slate-700 prose-li:text-slate-700">
-                    <Markdown>{selectedItem.content}</Markdown>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {selectedItem.content.map((q: any, idx: number) => (
-                      <div key={q.id} className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm print-full-width print-no-break">
-                        <h3 className="font-extrabold text-lg text-slate-900 bg-slate-100 px-3 py-1 rounded-lg inline-block mb-4">Soal {idx + 1}</h3>
-                        <div className="text-slate-800 text-base font-medium leading-relaxed mb-5 whitespace-pre-wrap">
-                          {q.text}
-                        </div>
-                        {q.options && q.options.length > 0 && (
-                          <div className="space-y-2.5 mb-6">
-                            {q.options.map((opt: string, i: number) => (
-                              <div key={i} className="flex items-start p-3.5 rounded-xl border border-slate-100 bg-slate-50">
-                                <span className="text-slate-700 font-medium">{opt}</span>
-                              </div>
-                            ))}
+                <AnimatePresence mode="wait">
+                  {typeof selectedItem.content === 'string' ? (
+                    <motion.div 
+                      key="markdown"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="prose prose-slate max-w-none prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-p:text-slate-700 prose-li:text-slate-700"
+                    >
+                      <Markdown>{selectedItem.content}</Markdown>
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      key="structured"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="space-y-6"
+                    >
+                      {selectedItem.content.map((q: any, idx: number) => (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                          key={q.id} 
+                          className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm print-full-width print-no-break"
+                        >
+                          <h3 className="font-extrabold text-lg text-slate-900 bg-slate-100 px-3 py-1 rounded-lg inline-block mb-4">Soal {idx + 1}</h3>
+                          <div className="text-slate-800 text-base font-medium leading-relaxed mb-5 whitespace-pre-wrap">
+                            {q.text}
                           </div>
-                        )}
-                        {includeAnswers && (
-                          <div className="mt-6 p-5 bg-emerald-50/80 border border-emerald-100 rounded-xl answer-block">
-                            <span className="font-bold text-emerald-800 block mb-2 flex items-center">
-                              <CheckCircle2 className="w-4 h-4 mr-1.5" /> Kunci Jawaban & Penjelasan:
-                            </span>
-                            <span className="text-emerald-700 font-medium whitespace-pre-wrap leading-relaxed">{q.answer}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          {q.options && q.options.length > 0 && (
+                            <div className="space-y-2.5 mb-6">
+                              {q.options.map((opt: string, i: number) => (
+                                <div key={i} className="flex items-start p-3.5 rounded-xl border border-slate-100 bg-slate-50">
+                                  <span className="text-slate-700 font-medium">{opt}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {includeAnswers && (
+                            <motion.div 
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              className="mt-6 p-5 bg-emerald-50/80 border border-emerald-100 rounded-xl answer-block"
+                            >
+                              <span className="font-bold text-emerald-800 block mb-2 flex items-center">
+                                <CheckCircle2 className="w-4 h-4 mr-1.5" /> Kunci Jawaban & Penjelasan:
+                              </span>
+                              <span className="text-emerald-700 font-medium whitespace-pre-wrap leading-relaxed">{q.answer}</span>
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           ) : (
