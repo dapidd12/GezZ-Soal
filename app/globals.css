@@ -16,7 +16,19 @@
     padding: 0 !important;
     margin: 0 !important;
   }
+  .print-no-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
   .prose {
     max-width: 100% !important;
+  }
+  .print-hide-answers .answer-block {
+    display: none !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
 }

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { Key, Save, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { Key, Save, ExternalLink, CheckCircle2, Loader2 } from 'lucide-react';
 
 export default function SettingsPage() {
+  const [mounted, setMounted] = useState(false);
   const [apiKeys, setApiKeys] = useLocalStorage<Record<string, string>>('soalgen-api-keys', {
     gemini: '',
     openai: '',
@@ -14,6 +15,10 @@ export default function SettingsPage() {
   
   const [localKeys, setLocalKeys] = useState(apiKeys);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync local state when component mounts (to avoid hydration mismatch)
   useEffect(() => {
@@ -49,6 +54,14 @@ export default function SettingsPage() {
       instructions: 'Login ke DeepSeek Platform, masuk ke menu API Keys, lalu klik "Create new API key".'
     }
   ];
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center min-h-[600px]">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
