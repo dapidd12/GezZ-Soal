@@ -11,7 +11,9 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [apiKeys] = useLocalStorage<Record<string, string>>('soalgen-api-keys', { gemini: '', openai: '', deepseek: '' });
   const [activeModel, setActiveModel] = useLocalStorage<AIModel>('soalgen-active-model', 'gemini');
-  const [history, setHistory] = useLocalStorage<any[]>('soalgen-history', []);
+  
+  // Gunakan state biasa untuk currentHistoryId agar tidak membebani render dengan seluruh array history
+  const [currentHistoryId, setCurrentHistoryId] = useState<string | null>(null);
 
   const [level, setLevel] = useState('SD');
   const [subject, setSubject] = useState('');
@@ -62,9 +64,10 @@ export default function Home() {
 
       setResult(generatedQuestions);
 
-      // Save to history
+      // Save to history di localStorage secara langsung (Optimasi)
+      const newId = crypto.randomUUID();
       const newHistoryItem = {
-        id: crypto.randomUUID(),
+        id: newId,
         date: new Date().toISOString(),
         level,
         subject,
@@ -74,7 +77,15 @@ export default function Home() {
         model: activeModel,
         content: generatedQuestions
       };
-      setHistory([newHistoryItem, ...history]);
+      
+      setCurrentHistoryId(newId);
+      
+      try {
+        const currentHistory = JSON.parse(localStorage.getItem('soalgen-history') || '[]');
+        localStorage.setItem('soalgen-history', JSON.stringify([newHistoryItem, ...currentHistory]));
+      } catch (e) {
+        console.error("Gagal menyimpan riwayat:", e);
+      }
 
     } catch (err: any) {
       setError(err.message || 'Terjadi kesalahan saat generate soal.');
@@ -98,11 +109,17 @@ export default function Home() {
       newResult[index] = { ...newQuestion, id: crypto.randomUUID() };
       setResult(newResult);
       
-      // Update the latest history item if it exists
-      if (history.length > 0) {
-        const newHistory = [...history];
-        newHistory[0].content = newResult;
-        setHistory(newHistory);
+      // Update the specific history item di localStorage secara langsung (Optimasi)
+      if (currentHistoryId) {
+        try {
+          const currentHistory = JSON.parse(localStorage.getItem('soalgen-history') || '[]');
+          const updatedHistory = currentHistory.map((item: any) => 
+            item.id === currentHistoryId ? { ...item, content: newResult } : item
+          );
+          localStorage.setItem('soalgen-history', JSON.stringify(updatedHistory));
+        } catch (e) {
+          console.error("Gagal memperbarui riwayat:", e);
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Gagal meregenerate soal.');
@@ -318,10 +335,13 @@ export default function Home() {
       {/* Result Section */}
       <div className={`lg:col-span-8 print-full-width ${!includeAnswers ? 'print-hide-answers' : ''}`}>
         <div className="bg-white shadow-sm border border-slate-200 rounded-2xl p-6 lg:p-8 min-h-[600px] flex flex-col">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 border-b border-slate-100 pb-4 hide-on-print gap-4">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Hasil Pembuatan Soal</h2>
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 border-b border-slate-100 pb-4 gap-4">
+            <div className="print-header">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Hasil Pembuatan Soal</h2>
+              <p className="text-sm text-slate-500 mt-1 hidden print:block">Mata Pelajaran: {subject} | Tingkat: {level} | Topik: {topic}</p>
+            </div>
             {result && (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full xl:w-auto">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full xl:w-auto hide-on-print">
                 {/* Toggle Answers */}
                 <button
                   onClick={() => setIncludeAnswers(!includeAnswers)}

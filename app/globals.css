@@ -3,6 +3,7 @@
 @media print {
   body {
     background-color: white !important;
+    color: black !important;
   }
   nav, .hide-on-print {
     display: none !important;
@@ -10,11 +11,12 @@
   .print-full-width {
     width: 100% !important;
     max-width: 100% !important;
-    grid-column: span 12 !important;
     box-shadow: none !important;
     border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    padding: 1rem 0 !important;
+    margin-bottom: 2rem !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-radius: 0 !important;
   }
   .print-no-break {
     page-break-inside: avoid !important;
@@ -26,9 +28,31 @@
   .print-hide-answers .answer-block {
     display: none !important;
   }
+  
+  /* Ensure text is black for better contrast */
+  .text-slate-800, .text-slate-700, .text-indigo-900, .text-emerald-800, .text-emerald-700 {
+    color: black !important;
+  }
+  
+  /* Make options look like a list */
+  .border-slate-200 {
+    border-color: #cbd5e1 !important;
+  }
+  .bg-slate-50 {
+    background-color: transparent !important;
+  }
+  .bg-emerald-50\/80 {
+    background-color: transparent !important;
+    border: 1px dashed #cbd5e1 !important;
+  }
+  
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
+  }
+  
+  @page {
+    margin: 2cm;
   }
 }
