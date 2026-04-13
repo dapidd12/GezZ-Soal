@@ -419,10 +419,10 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
                       key={q.id} 
-                      className="p-6 lg:p-8 border border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow print-full-width print-no-break relative group"
+                      className="p-6 lg:p-8 border border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow print-full-width print-no-break relative group print:p-0 print:py-4 print:border-none print:shadow-none"
                     >
-                      <div className="flex justify-between items-start mb-5">
-                        <h3 className="font-extrabold text-lg text-indigo-900 bg-indigo-50 px-4 py-1.5 rounded-lg border border-indigo-100">Soal {idx + 1}</h3>
+                      <div className="flex justify-between items-start mb-5 print:mb-2">
+                        <h3 className="font-extrabold text-lg text-indigo-900 bg-indigo-50 px-4 py-1.5 rounded-lg border border-indigo-100 print:bg-transparent print:border-none print:p-0 print:text-black">Soal {idx + 1}</h3>
                         <button
                           onClick={() => handleRegenerateQuestion(idx)}
                           disabled={regeneratingId === q.id}
@@ -434,15 +434,15 @@ export default function Home() {
                         </button>
                       </div>
                       
-                      <div className="text-slate-800 text-lg font-medium leading-relaxed mb-6 whitespace-pre-wrap">
+                      <div className="text-slate-800 text-lg font-medium leading-relaxed mb-6 whitespace-pre-wrap print:mb-3 print:text-black">
                         {q.text}
                       </div>
                       
                       {q.options && q.options.length > 0 && (
-                        <div className="space-y-3 mb-8">
+                        <div className="space-y-3 mb-8 print:space-y-1 print:mb-4">
                           {q.options.map((opt, i) => (
-                            <div key={i} className="flex items-start p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-indigo-200 hover:shadow-sm transition-all cursor-default">
-                              <span className="text-slate-700 font-medium">{opt}</span>
+                            <div key={i} className="flex items-start p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-indigo-200 hover:shadow-sm transition-all cursor-default print:p-1 print:border-none print:bg-transparent">
+                              <span className="text-slate-700 font-medium print:text-black">{opt}</span>
                             </div>
                           ))}
                         </div>
@@ -452,12 +452,12 @@ export default function Home() {
                         <motion.div 
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
-                          className="mt-6 p-5 bg-emerald-50/80 border border-emerald-200 rounded-xl answer-block"
+                          className="mt-6 p-5 bg-emerald-50/80 border border-emerald-200 rounded-xl answer-block print:mt-2 print:p-3 print:bg-transparent print:border-dashed print:border-slate-300"
                         >
-                          <span className="font-bold text-emerald-800 block mb-2 flex items-center">
-                            <CheckCircle2 className="w-5 h-5 mr-2" /> Kunci Jawaban & Penjelasan:
+                          <span className="font-bold text-emerald-800 block mb-2 flex items-center print:text-black">
+                            <CheckCircle2 className="w-5 h-5 mr-2 print:hidden" /> Kunci Jawaban & Penjelasan:
                           </span>
-                          <span className="text-emerald-700 font-medium whitespace-pre-wrap leading-relaxed block mt-2">{q.answer}</span>
+                          <span className="text-emerald-700 font-medium whitespace-pre-wrap leading-relaxed block mt-2 print:text-black">{q.answer}</span>
                         </motion.div>
                       )}
                     </motion.div>

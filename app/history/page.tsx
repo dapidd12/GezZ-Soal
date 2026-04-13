@@ -272,17 +272,17 @@ export default function HistoryPage() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.1 }}
                           key={q.id} 
-                          className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm print-full-width print-no-break"
+                          className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm print-full-width print-no-break print:p-0 print:py-4 print:border-none print:shadow-none"
                         >
-                          <h3 className="font-extrabold text-lg text-slate-900 bg-slate-100 px-3 py-1 rounded-lg inline-block mb-4">Soal {idx + 1}</h3>
-                          <div className="text-slate-800 text-base font-medium leading-relaxed mb-5 whitespace-pre-wrap">
+                          <h3 className="font-extrabold text-lg text-slate-900 bg-slate-100 px-3 py-1 rounded-lg inline-block mb-4 print:bg-transparent print:border-none print:p-0 print:text-black print:mb-2">Soal {idx + 1}</h3>
+                          <div className="text-slate-800 text-base font-medium leading-relaxed mb-5 whitespace-pre-wrap print:mb-3 print:text-black">
                             {q.text}
                           </div>
                           {q.options && q.options.length > 0 && (
-                            <div className="space-y-2.5 mb-6">
+                            <div className="space-y-2.5 mb-6 print:space-y-1 print:mb-4">
                               {q.options.map((opt: string, i: number) => (
-                                <div key={i} className="flex items-start p-3.5 rounded-xl border border-slate-100 bg-slate-50">
-                                  <span className="text-slate-700 font-medium">{opt}</span>
+                                <div key={i} className="flex items-start p-3.5 rounded-xl border border-slate-100 bg-slate-50 print:p-1 print:border-none print:bg-transparent">
+                                  <span className="text-slate-700 font-medium print:text-black">{opt}</span>
                                 </div>
                               ))}
                             </div>
@@ -291,12 +291,12 @@ export default function HistoryPage() {
                             <motion.div 
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="mt-6 p-5 bg-emerald-50/80 border border-emerald-100 rounded-xl answer-block"
+                              className="mt-6 p-5 bg-emerald-50/80 border border-emerald-100 rounded-xl answer-block print:mt-2 print:p-3 print:bg-transparent print:border-dashed print:border-slate-300"
                             >
-                              <span className="font-bold text-emerald-800 block mb-2 flex items-center">
-                                <CheckCircle2 className="w-4 h-4 mr-1.5" /> Kunci Jawaban & Penjelasan:
+                              <span className="font-bold text-emerald-800 block mb-2 flex items-center print:text-black">
+                                <CheckCircle2 className="w-4 h-4 mr-1.5 print:hidden" /> Kunci Jawaban & Penjelasan:
                               </span>
-                              <span className="text-emerald-700 font-medium whitespace-pre-wrap leading-relaxed">{q.answer}</span>
+                              <span className="text-emerald-700 font-medium whitespace-pre-wrap leading-relaxed print:text-black">{q.answer}</span>
                             </motion.div>
                           )}
                         </motion.div>
